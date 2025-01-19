@@ -1,0 +1,130 @@
+<style> code { white-space: pre-wrap; display: block; background-color: #eee; }.executed { background-color: #afa; }.reverted { background-color: #ffa; }.unexecuted { background-color: #faa; }.neutral { background-color: #eee; }</style><b>/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise3/mintable.sol</b>
+<code>
+  1 |     | <span class='neutral'>// SPDX-License-Identifier: MIT</span>
+  2 |     | <span class='neutral'>pragma solidity ^0.8.0;</span>
+  3 |     | <span class='neutral'></span>
+  4 |     | <span class='neutral'>import &quot;./token.sol&quot;;</span>
+  5 |     | <span class='neutral'></span>
+  6 |     | <span class='unexecuted'>contract MintableToken is Token {</span>
+  7 | *   | <span class='executed'>    int256 public totalMinted;</span>
+  8 | *   | <span class='executed'>    int256 public totalMintable;</span>
+  9 |     | <span class='neutral'></span>
+ 10 | *   | <span class='executed'>    constructor(int256 totalMintable_) {</span>
+ 11 | *   | <span class='executed'>        totalMintable = totalMintable_;</span>
+ 12 |     | <span class='neutral'>    }</span>
+ 13 |     | <span class='neutral'></span>
+ 14 |     | <span class='neutral'>    //@audit To prevent this type of bug, you must ensure that value is always within the valid range of int256 before performing the cast. Add an explicit check for value:</span>
+ 15 |     | <span class='neutral'></span>
+ 16 |     | <span class='neutral'>    // function mint(uint256 value) public onlyOwner {</span>
+ 17 |     | <span class='neutral'>    //     require(value &lt;= uint256(type(int256).max), &quot;Value exceeds int256 range&quot;);</span>
+ 18 |     | <span class='neutral'>    //     require(int256(value) + totalMinted &lt;= totalMintable, &quot;Mint exceeds total mintable tokens&quot;);</span>
+ 19 |     | <span class='neutral'></span>
+ 20 |     | <span class='neutral'>    //     totalMinted += int256(value);</span>
+ 21 |     | <span class='neutral'>    //     balances[msg.sender] += value;</span>
+ 22 |     | <span class='neutral'>    // }</span>
+ 23 |     | <span class='neutral'></span>
+ 24 | *   | <span class='executed'>    function mint(uint256 value) public onlyOwner {</span>
+ 25 | *r  | <span class='executed'>        require(int256(value) + totalMinted &lt; totalMintable);</span>
+ 26 |     | <span class='neutral'>        // require(value &lt;=  uint256(type(int256).max) , &quot;Value more than the int256 &quot;);</span>
+ 27 | *   | <span class='executed'>        totalMinted += int256(value);</span>
+ 28 |     | <span class='neutral'></span>
+ 29 | *   | <span class='executed'>        balances[owner] += value;</span>
+ 30 |     | <span class='neutral'>    }</span>
+ 31 |     | <span class='neutral'></span>
+ 32 |     | <span class='neutral'>}</span>
+ 33 |     | <span class='neutral'>    // @audit i think their are two invariant here</span>
+ 34 |     | <span class='neutral'>    // 1. will be that the balances of the mag.sender should never greater than totalMinted</span>
+ 35 |     | <span class='neutral'>    // 2. will be that the totalMintable &gt; totalMinted </span>
+ 36 |     | <span class='neutral'>    // 3. See if the user can mint more that what is the limit </span>
+
+</code>
+<br />
+
+<b>/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise3/testToken.sol</b>
+<code>
+  1 |     | <span class='neutral'>// SPDX-License-Identifier: MIT</span>
+  2 |     | <span class='neutral'>pragma solidity ^0.8.0;</span>
+  3 |     | <span class='neutral'></span>
+  4 |     | <span class='neutral'></span>
+  5 |     | <span class='neutral'>import &quot;./mintable.sol&quot;;</span>
+  6 |     | <span class='neutral'></span>
+  7 | *r  | <span class='executed'>contract testToken is MintableToken {</span>
+  8 |     | <span class='neutral'></span>
+  9 |     | <span class='neutral'>    // Create a scenario where echidna (tx.origin) becomes the owner of the contract at construction, and totalMintable is set to 10,000. Remember that Echidna needs a constructor without arguments.</span>
+ 10 |     | <span class='neutral'>    // Add a property to check if echidna can mint more than 10,000 tokens.</span>
+ 11 |     | <span class='neutral'>    // Once Echidna finds the bug, fix the issue, and re-try your property with Echidna.</span>
+ 12 |     | <span class='neutral'></span>
+ 13 |     | <span class='neutral'>    // @audit i think their are two invariant here</span>
+ 14 |     | <span class='neutral'>    // 1. will be that the balances of the msg.sender should never greater than totalMinted</span>
+ 15 |     | <span class='neutral'>    // 2. will be that the totalMintable &gt; totalMinted </span>
+ 16 |     | <span class='neutral'>    // 3. See if the user can mint more that what is the limit </span>
+ 17 |     | <span class='neutral'></span>
+ 18 | *   | <span class='executed'>    address user = msg.sender;</span>
+ 19 |     | <span class='neutral'></span>
+ 20 | *   | <span class='executed'>    constructor () MintableToken(10000) {</span>
+ 21 | *   | <span class='executed'>        owner = user;</span>
+ 22 |     | <span class='neutral'>    }</span>
+ 23 |     | <span class='neutral'></span>
+ 24 |     | <span class='neutral'>    // function echidna_user_can_mint_more_than_totalMintable() public view returns(bool) {</span>
+ 25 |     | <span class='neutral'>    //     // return totalMinted &lt; 10000;</span>
+ 26 |     | <span class='neutral'>    //     return balances[msg.sender] &lt;= 10_000;</span>
+ 27 |     | <span class='neutral'>    // }</span>
+ 28 |     | <span class='neutral'></span>
+ 29 |     | <span class='unexecuted'>    function echidna_bal_ofuser_not_greater_than_totalMinted() public view returns(bool){</span>
+ 30 |     | <span class='unexecuted'>        return int256(balances[owner]) == totalMinted;</span>
+ 31 |     | <span class='neutral'>        // return totalMinted &lt;= totalMintable;</span>
+ 32 |     | <span class='neutral'>    }</span>
+ 33 |     | <span class='neutral'>}</span>
+
+</code>
+<br />
+
+<b>/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise3/token.sol</b>
+<code>
+  1 |     | <span class='neutral'>// SPDX-License-Identifier: MIT</span>
+  2 |     | <span class='neutral'>pragma solidity ^0.8.0;</span>
+  3 |     | <span class='neutral'></span>
+  4 |     | <span class='neutral'>/// @notice The issues from exercise 1 and 2 are fixed.</span>
+  5 |     | <span class='neutral'></span>
+  6 |     | <span class='unexecuted'>contract Ownable {</span>
+  7 | *   | <span class='executed'>    address public owner = msg.sender;</span>
+  8 |     | <span class='neutral'></span>
+  9 |     | <span class='neutral'>    modifier onlyOwner() {</span>
+ 10 | *r  | <span class='executed'>        require(msg.sender == owner, &quot;Ownable: Caller is not the owner.&quot;);</span>
+ 11 |     | <span class='neutral'>        _;</span>
+ 12 |     | <span class='neutral'>    }</span>
+ 13 |     | <span class='neutral'>}</span>
+ 14 |     | <span class='neutral'></span>
+ 15 |     | <span class='unexecuted'>contract Pausable is Ownable {</span>
+ 16 |     | <span class='neutral'>    bool private _paused;</span>
+ 17 |     | <span class='neutral'></span>
+ 18 | *   | <span class='executed'>    function paused() public view returns (bool) {</span>
+ 19 | *   | <span class='executed'>        return _paused;</span>
+ 20 |     | <span class='neutral'>    }</span>
+ 21 |     | <span class='neutral'></span>
+ 22 | *   | <span class='executed'>    function pause() public onlyOwner {</span>
+ 23 | *   | <span class='executed'>        _paused = true;</span>
+ 24 |     | <span class='neutral'>    }</span>
+ 25 |     | <span class='neutral'></span>
+ 26 | *   | <span class='executed'>    function resume() public onlyOwner {</span>
+ 27 | *   | <span class='executed'>        _paused = false;</span>
+ 28 |     | <span class='neutral'>    }</span>
+ 29 |     | <span class='neutral'></span>
+ 30 |     | <span class='neutral'>    modifier whenNotPaused() {</span>
+ 31 | *r  | <span class='executed'>        require(!_paused, &quot;Pausable: Contract is paused.&quot;);</span>
+ 32 |     | <span class='neutral'>        _;</span>
+ 33 |     | <span class='neutral'>    }</span>
+ 34 |     | <span class='neutral'>}</span>
+ 35 |     | <span class='neutral'></span>
+ 36 |     | <span class='unexecuted'>contract Token is Ownable, Pausable {</span>
+ 37 | *   | <span class='executed'>    mapping(address =&gt; uint256) public balances;</span>
+ 38 |     | <span class='neutral'></span>
+ 39 | *   | <span class='executed'>    function transfer(address to, uint256 value) public whenNotPaused {</span>
+ 40 | *   | <span class='executed'>        balances[msg.sender] -= value;</span>
+ 41 | *   | <span class='executed'>        balances[to] += value;</span>
+ 42 |     | <span class='neutral'>    }</span>
+ 43 |     | <span class='neutral'>}</span>
+
+</code>
+<br />
+

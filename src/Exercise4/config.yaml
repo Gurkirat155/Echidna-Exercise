@@ -1,0 +1,6 @@
+
+testLimit: 50000
+# debug: true
+coverage: true 
+corpusDir: "corpus"
+testMode: assertion

@@ -1,0 +1,73 @@
+/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise1/testToken.sol
+  1 |     | // SPDX-License-Identifier: MIT
+  2 |     | pragma solidity ^0.8.0;
+  3 |     | 
+  4 |     | import "./token.sol";
+  5 |     | 
+  6 |     | 
+  7 | *r  | contract testToken is Token {
+  8 |     | 
+  9 |     |     // Token  public token;
+ 10 |     |     // User user;
+ 11 | *   |     address user = msg.sender;
+ 12 | *   |     constructor (){
+ 13 |     |         // token = new Token();
+ 14 |     |         // user  = new User();
+ 15 |     | 
+ 16 |     |         // token.transfer();
+ 17 |     |         // token.balances(user) = 10000;
+ 18 | *   |         balances[user] = 10_000;
+ 19 |     |     }
+ 20 |     | 
+ 21 |     |     function echidna_test_Balances() public view returns(bool) {
+ 22 |     |         // assert(balances(user) <= 10000);
+ 23 |     |         return balances[user] <= 10000;
+ 24 |     |     }
+ 25 |     | }
+
+/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise1/token.sol
+  1 |     | // SPDX-License-Identifier: MIT
+  2 |     | pragma solidity ^0.8.0;
+  3 |     | 
+  4 |     | contract Ownable {
+  5 | *   |     address public owner = msg.sender;
+  6 |     | 
+  7 |     |     modifier onlyOwner() {
+  8 | *r  |         require(msg.sender == owner, "Ownable: Caller is not the owner.");
+  9 |     |         _;
+ 10 |     |     }
+ 11 |     | }
+ 12 |     | 
+ 13 |     | contract Pausable is Ownable {
+ 14 |     |     bool private _paused;
+ 15 |     | 
+ 16 | *   |     function paused() public view returns (bool) {
+ 17 | *   |         return _paused;
+ 18 |     |     }
+ 19 |     | 
+ 20 | *   |     function pause() public onlyOwner {
+ 21 | *   |         _paused = true;
+ 22 |     |     }
+ 23 |     | 
+ 24 | *   |     function resume() public onlyOwner {
+ 25 | *   |         _paused = false;
+ 26 |     |     }
+ 27 |     | 
+ 28 |     |     modifier whenNotPaused() {
+ 29 | *r  |         require(!_paused, "Pausable: Contract is paused.");
+ 30 |     |         _;
+ 31 |     |     }
+ 32 |     | }
+ 33 |     | 
+ 34 |     | contract Token is Ownable, Pausable {
+ 35 | *   |     mapping(address => uint256) public balances;
+ 36 |     | 
+ 37 | *   |     function transfer(address to, uint256 value) public whenNotPaused {
+ 38 |     |         // unchecked to save gas
+ 39 |     |         // unchecked {
+ 40 | *   |             balances[msg.sender] -= value;
+ 41 | *   |             balances[to] += value;
+ 42 |     |         // }
+ 43 |     |     }
+ 44 |     | }
+

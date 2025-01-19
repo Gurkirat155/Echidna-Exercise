@@ -1,0 +1,1 @@
+Owner function should be removed in order to solve the problem 

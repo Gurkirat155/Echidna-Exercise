@@ -1,0 +1,31 @@
+TN:
+SF:/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise2/testToken.sol
+DA:10,82
+DA:13,7
+DA:14,9
+DA:15,21
+DA:23,0
+DA:24,0
+end_of_record
+
+SF:/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise2/token.sol
+DA:4,0
+DA:5,54
+DA:7,8
+DA:8,21
+DA:12,46
+DA:17,0
+DA:20,30
+DA:21,26
+DA:24,8
+DA:25,21
+DA:28,8
+DA:29,21
+DA:33,35
+DA:38,0
+DA:39,52
+DA:41,23
+DA:42,36
+DA:43,36
+end_of_record
+

@@ -1,10 +1,17 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Ownable {
     address public owner = msg.sender;
+    // @audit To fix the bug we should only remove the below function  
+
+
+    // function Owner() public {
+    //     owner = msg.sender;
+    // }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Ownable: Caller is not the owner.");
+        require(owner == msg.sender);
         _;
     }
 }
@@ -34,10 +41,7 @@ contract Token is Ownable, Pausable {
     mapping(address => uint256) public balances;
 
     function transfer(address to, uint256 value) public whenNotPaused {
-        // unchecked to save gas
-        unchecked {
-            balances[msg.sender] -= value;
-            balances[to] += value;
-        }
+        balances[msg.sender] -= value;
+        balances[to] += value;
     }
 }

@@ -1,0 +1,3 @@
+testLimit: 50000
+corpusDir: corpus
+coverage: true 
