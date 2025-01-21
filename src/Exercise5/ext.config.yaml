@@ -1,0 +1,13 @@
+
+testLimit: 50000
+# debug: true
+coverage: true 
+corpusDir: "corpus"
+# testMode: assertion
+# cryticArgs: ["--solc-remaps", "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"]
+# cryticArgs: ["--foundry-compile-all","--solc-remaps", "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"]
+# cryticArgs: ["--compile-force-framework", "foundry"]
+# cryticArgs: ["--foundry-compile-all"]
+# crytic-args: ["--foundry-compile-all"]
+# args: ["--foundry-compile-all"]
+multi-abi: true
