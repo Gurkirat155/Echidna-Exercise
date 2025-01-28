@@ -2,7 +2,7 @@
 testLimit: 50000
 # debug: true
 coverage: true 
-corpusDir: "/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise5/corpus"
+corpusDir: "corpus"
 # testMode: assertion
 # cryticArgs: ["--solc-remaps", "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"]
 # cryticArgs: ["--foundry-compile-all","--solc-remaps", "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"]
@@ -11,10 +11,3 @@ corpusDir: "/Users/gurkiratsingh/Desktop/Fuzzing Exercises/src/Exercise5/corpus"
 # crytic-args: ["--foundry-compile-all"]
 # args: ["--foundry-compile-all"]
 multi-abi: true
-# balanceAddr: 0xffffffff
-# TestOptions:
-#   initialBalance:
-#     "EchidnaTest": 2000 ether
-# 10,000 ether is placed in the NaiveReceiverEchidna contract.
-balanceContract: 10000000000000000000000
-allContracts: true

@@ -8,7 +8,7 @@ import "./DamnValuableToken.sol";
 import "./UnstoppableLender.sol";
 
 
-contract EchidnaTest {
+contract EchidnaReciever {
 
     address setOwner = msg.sender;
     IERC20 public damnValuableToken;
